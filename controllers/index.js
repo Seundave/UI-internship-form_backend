@@ -4,14 +4,6 @@ const formSubmissionEmail = require("../templates/formSubmissionEmail");
 const ErrorResponse = require("../utils/errorResponse");
 const filterObj = require("../utils/filterObj")
 
-const sendSuccessMessage = (message, res, other) => {
-  return res.status(200).json({
-    status: "success",
-    message: message,
-    ...other,
-  });
-};
-
 
 exports.addIntern = async (req, res, next) => {
     const filteredBody = await filterObj(
@@ -54,13 +46,11 @@ exports.addIntern = async (req, res, next) => {
         text: formSubmissionEmail(newIntern.firstName)
       });
 
-    return sendSuccessMessage(
-      "Form submission email sent! Check your email",
-      res,
-      {
-        email: newIntern.email,
-      }
-    );
+    return res.status(200).json({
+      status: "success",
+      message: "Form submission email sent! Check your email",
+      email: newIntern.email,
+    });
   } catch (error) {
     next(error);
   }
