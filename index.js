@@ -8,11 +8,12 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+console.log(process.env.DB_URI)
 // connect to database
 mongoose
   .connect(process.env.DB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Database connection established successfully");
