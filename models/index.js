@@ -21,11 +21,11 @@ const internSchema = new mongoose.Schema({
     enum: ["male", "female"],
     required: [true, "gender is required"],
   },
-  date: {
+  dateofbirth: {
     type: Date,
     required: [true, "date is required"],
   },
-  state: {
+  stateoforigin: {
     type: String,
     required: [true, "state is required"],
   },
@@ -69,11 +69,11 @@ const internSchema = new mongoose.Schema({
   internshipDetails: {
     type: {
         year: String,
-        company: String,
-        duration: Number
+        organization: String,
+        duration: String
     },
   },
-  reason: {
+  reasonitems: {
     type: String,
     required: [true, "reason of study is required"],
     trim: true
@@ -92,6 +92,11 @@ const internSchema = new mongoose.Schema({
     required: [true, "skill is required"],
     trim: true
   },
+  expectations:{
+    type:String,
+    required: [true, "expectation is required"],
+    trim:true
+  }
 });
 
 const Intern = new mongoose.model("Intern", internSchema);

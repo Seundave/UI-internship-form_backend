@@ -1,8 +1,13 @@
 const Intern = require("../models");
+const User = require("../models/userModel")
 const sendEmail = require("../services/mailer");
 const formSubmissionEmail = require("../templates/formSubmissionEmail");
+const  errorHandler  = require("../utils/error");
 const ErrorResponse = require("../utils/errorResponse");
 const filterObj = require("../utils/filterObj")
+const bcryptjs = require("bcrypt")
+const jwt = require('jsonwebtoken')
+
 
 
 exports.addIntern = async (req, res, next) => {
@@ -12,8 +17,8 @@ exports.addIntern = async (req, res, next) => {
         "firstName",
         "middleName",
         "gender",
-        "date",
-        "state",
+        "dateofbirth",
+        "stateoforigin",
         "address",
         "email",
         "institution",
@@ -21,10 +26,11 @@ exports.addIntern = async (req, res, next) => {
         "level",
         "firstInternship",
         "internshipDetails",
-        "reason",
+        "reasonitems",
         "interest",
         "explainInterest",
         "skills",
+        "expectations",
     );
  // to check if a verified intern with given intern id exists
   const intern = await Intern.findOne({email: req.body.email})
@@ -88,5 +94,39 @@ exports.deleteIntern = async (req, res, next) => {
     next(error)
   }
 };
+
+exports.signUpAdmin = async (req, res, next)=>{
+  const { email, password } = req.body;
+  const hashedPassword = bcryptjs.hashSync(password, 10);
+  const newUser = new User({
+    email,
+    password: hashedPassword,
+  });
+
+  try {
+    await newUser.save();
+    res.status(201).json("User created successfully");
+  } catch (error) {
+    next(error);
+  }
+}
+
+exports.signInAdmin = async (req, res, next)=>{
+  const { email, password } = req.body;
+  try {
+    const validUser = await User.findOne({ email });
+    if (!validUser) return next(errorHandler(404, "User not found"));
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const { password: pass, ...rest } = validUser._doc; //To remove the password from showing inside the data
+    res
+      .cookie("access_token", token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+  } catch (error) {
+    next(error);
+  }
+}
 
 
