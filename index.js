@@ -8,7 +8,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-console.log(process.env.DB_URI)
+console.log(process.env.DB_URI);
 // connect to database
 mongoose
   .connect(process.env.DB_URI, {
